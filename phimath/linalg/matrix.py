@@ -5,8 +5,22 @@ class matrix:
     def __init__(self, data):
         self.data = data
 
+    def __getitem__(self, idx):
+        i, j = idx
+        return self.data[i][j]
+
+    def __setitem__(self, idx, value):
+        i, j = idx
+        self.data[i][j] = value
+
     def shape(self):
         return len(self.data), len(self.data[0]) if self.data else 0
+    
+    def rows(self):
+        return self.shape()[0]
+    
+    def cols(self):
+        return self.shape()[1]
 
     def __add__(self, other):
         if self.shape() != other.shape():

@@ -20,3 +20,7 @@ print(pm.exp(pm.ln(5)))  # ≈ 5.0
 print(b * 6)        
 print (c + d)
 print (PI+2)
+
+a = [1,1,7]
+b=[2,-1,2]
+print(pm.solve_linear_system(a,b))
