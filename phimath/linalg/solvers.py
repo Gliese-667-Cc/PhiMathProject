@@ -1,4 +1,5 @@
 from phimath.linalg.matrix import matrix
+from phimath.math.func import sqrt
 
 def gaussian_eleminator(A, B):
     # Ensure inputs are matrix objects
@@ -83,7 +84,7 @@ def quadratic_solver(a: float, b: float, c: float) -> tuple:
     """
     if a == 0:
         raise ValueError("Coefficient 'a' cannot be zero for a quadratic equation.")
-    determinent = b*b - 4*a*c
-    root1 = (-b + determinent**0.5)/(2*a)
-    root2 = (-b - determinent**0.5)/(2*a)
+    d = b*b - 4*a*c
+    root1 = (-b + sqrt(d))/(2*a) #using power operator, later will be changed to sqrt for better precision
+    root2 = (-b - sqrt(d))/(2*a)
     return (root1,root2)

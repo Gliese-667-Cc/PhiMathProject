@@ -1,6 +1,7 @@
 from phimath.math.constants import E, PI, TWO_PI, HALF_PI, DEG_TO_RAD, RAD_TO_DEG
 from phimath.math.trigo import normalize_angle, sin, cos, sin_deg, cos_deg, tan, tan_deg, sinh, cosh, asin, acos, atan, atan2
 from phimath.math.exp_log import exp, ln, log
+from phimath.math.func import sqrt, cbrt, pow
 from phimath.linalg.vectors import vector
 from phimath.linalg.matrix import matrix
 from phimath.linalg.solvers import solve_linear_system, gaussian_eleminator, quadratic_solver
@@ -15,6 +16,8 @@ __all__ = [
     "asin","acos","atan","atan2",
     #exponential and logarithmic functions
     "exp","ln","log",
+    #other math functions
+    "sqrt","cbrt","pow",
     #linear algebra
     "vector","matrix", "solve_linear_system", "gaussian_eleminator", "quadratic_solver",
     ]

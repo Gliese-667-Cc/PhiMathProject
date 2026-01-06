@@ -55,7 +55,7 @@ def sin(x:float) -> float:
             term *= -1 * x * x / ((2*n + 2) * (2*n + 3))
             n += 1
 
-        return result
+        return round(result,10)
 
 # -------------------------------------------------
 # Cosine (radians)
@@ -79,7 +79,7 @@ def cos(x:float) -> float:
         term *= -1 * x * x / ((2*n + 1) * (2*n + 2))
         n += 1
 
-    return result
+    return round(result, 10)
 
 
 # -------------------------------------------------
@@ -145,7 +145,7 @@ def sinh(x:float) -> float:
         term *= x * x / ((2*n + 2) * (2*n + 3))
         n += 1
 
-    return result
+    return round(result,10)
 
 def cosh(x:float) -> float:
     """
@@ -165,7 +165,7 @@ def cosh(x:float) -> float:
         term *= x * x / ((2*n + 1) * (2*n + 2))
         n += 1
 
-    return result
+    return round(result,10)
 
 def asin(x:float) -> float:
     """
@@ -189,7 +189,7 @@ def asin(x:float) -> float:
         term *= (2*n + 1)**2 * x * x / (2 * (n + 1) * (2*n + 3))
         n += 1
 
-    return result
+    return round(result,10)
 
 def acos(x:float) -> float:
     """
@@ -219,7 +219,7 @@ def atan(x:float) -> float:
         term *= -1 * x * x * (2*n + 1) / (2*n + 2)
         n += 1
 
-    return result
+    return round(result,10)
 
 def atan2(y:float, x:float) -> float:
     """

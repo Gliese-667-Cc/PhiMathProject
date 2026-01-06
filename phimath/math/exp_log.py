@@ -34,7 +34,7 @@ def exp(x: float) -> float:
 
         n += 1
 
-    return result
+    return round(result,10)
 
 
 # -------------------------------------------------
@@ -78,7 +78,7 @@ def ln(x: float) -> float:
         term *= y * y
         n += 1
 
-    return 2.0 * result + k
+    return round(2.0 * result + k, 10)
 
 
 # -------------------------------------------------
@@ -94,5 +94,5 @@ def log(x: float, base: float = 10.0) -> float:
     if base <= 0 or base == 1:
         raise ValueError("log base must be positive and not equal to 1")
 
-    return ln(x) / ln(base)
+    return round(ln(x) / ln(base), 10)
 
