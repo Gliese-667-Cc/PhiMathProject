@@ -76,3 +76,14 @@ def solve_linear_system(*equations):
     # 3. Pass to the Gaussian Eliminator logic
     # (Assuming you renamed your logic or used the one we discussed)
     return gaussian_eleminator(Co, Re)
+
+def quadratic_solver(a: float, b: float, c: float) -> tuple:
+    """
+    simple quadratic equation solver for equations of the form: ax^2 + bx + c = 0
+    """
+    if a == 0:
+        raise ValueError("Coefficient 'a' cannot be zero for a quadratic equation.")
+    determinent = b*b - 4*a*c
+    root1 = (-b + determinent**0.5)/(2*a)
+    root2 = (-b - determinent**0.5)/(2*a)
+    return (root1,root2)
