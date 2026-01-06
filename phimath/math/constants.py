@@ -55,6 +55,3 @@ E = compute_e()
 # Angle conversions
 DEG_TO_RAD = PI / 180.0
 RAD_TO_DEG = 180.0 / PI
-
-
-print (PI, E)
