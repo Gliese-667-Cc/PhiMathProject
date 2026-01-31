@@ -102,3 +102,25 @@ class matrix:
         rows = [str(row) for row in self.data]
         return "\n".join(rows)
     
+    
+    def lu_decomposition(A):
+        """
+        Performs LU Decomposition of matrix A.
+        Returns matrices L and U such that A = LU.
+        """
+        n = A.rows()
+        L = matrix([[0 if i != j else 1 for j in range(n)] for i in range(n)])
+        U = matrix([[0 for _ in range(n)] for _ in range(n)])
+    
+        for i in range(n):
+            for j in range(i, n):
+                U[i, j] = A[i, j]
+                for k in range(i):
+                    U[i, j] -= L[i, k] * U[k, j]
+            for j in range(i + 1, n):
+                L[j, i] = A[j, i]
+                for k in range(i):
+                    L[j, i] -= L[j, k] * U[k, i]
+                L[j, i] /= U[i, i]
+    
+        return L, U
