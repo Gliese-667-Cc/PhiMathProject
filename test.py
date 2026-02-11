@@ -31,3 +31,4 @@ print(pm.solve_linear_system(e,f,g,h))                      # Solve linear equat
 print(pm.quadratic_solver(1,-3,2))                      # Solve quadratic equations
 print(pm.quadratic_solver(1,2,5))                       # Solve quadratic equations with complex roots
 print(equations.solve(re))
+print(type(a))

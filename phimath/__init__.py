@@ -8,9 +8,12 @@ from phimath.linalg.solvers import solve_linear_system, gaussian_eleminator, qua
 from phimath.calculas.differentiate import differentiate, fdifferentiate, bdifferentiate, second_derivative, nth_derivative
 from phimath.calculas.integrate import integrate, reimann_sum, simpsons_rule, trapezoidal_rule, boole_rule, romberg_integration
 from phimath.calculas.ode_solvers import ode_solver, rk2, rk4, rkf45, euler
+from phimath.control.symbols import symbols, Symbol, Expression, VectorSymbol, VectorSymbolComponents
 __all__ = [
     #contants
     "E","PI","TWO_PI","HALF_PI","DEG_TO_RAD","RAD_TO_DEG",
+    #symobols and expressions
+    "Symbol","symbols","Expression","VectorSymbol","VectorSymbolComponents",
     #core-trigonometric functions
     "normalize_angle","sin","cos","sin_deg","cos_deg","tan","tan_deg",
     #hyperbolic functions

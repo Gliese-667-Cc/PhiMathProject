@@ -10,12 +10,22 @@ def normalize_angle(x: float) -> float:
 # -------------------------------------------------
 
 def sin(x: float) -> float:
+    if x == 0:
+        return 0.0
+    if x == math.pi:
+        return 0.0
     return math.sin(x)
 
 def cos(x: float) -> float:
+    if x == math.pi / 2:
+        return 0.0
+    if x == 3 * math.pi / 2:
+        return 0.0
     return math.cos(x)
 
 def tan(x: float) -> float:
+    if x == math.pi / 2 or x == 3 * math.pi / 2:
+        raise ValueError("tan(x) is undefined for x = (2n+1)*pi/2")
     return math.tan(x)
 
 def sec(x: float) -> float:

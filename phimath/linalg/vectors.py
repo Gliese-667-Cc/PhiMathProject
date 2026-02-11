@@ -1,7 +1,24 @@
 from phimath.math.trigo import *
 from phimath.math.constants import *
+from phimath.control.symbols import *
 
 class vector:
+   
+    def __new__(cls, x=None, y=None, z=None, mode=None):
+        # Check if input is a string (e.g., vector("E")) or contains Symbols
+        is_symbolic = isinstance(x, str) or \
+                      (hasattr(x, 'name') and hasattr(x, 'is_function')) or \
+                      (isinstance(x, (list, tuple)) and any(hasattr(i, 'name') for i in x if i is not None))
+
+        if is_symbolic:
+            # Lazy Import to avoid Circular Dependency errors
+            from phimath.control.symbols import VectorSymbol
+            # Delegate to the Symbolic backend
+            return VectorSymbol(x)
+        
+        # Otherwise, create a standard efficient Numerical vector
+        return super(vector, cls).__new__(cls)
+    
     def __init__ (self,x=None,y=None,z=None,mode=None):
         self.mode = mode.lower() if mode else None
         if self.mode == 'polar' or self.mode == 'spherical':
@@ -46,3 +63,4 @@ class vector:
     
     def __repr__(self):
         return f"vector({self.x}, {self.y}, {self.z})"
+    

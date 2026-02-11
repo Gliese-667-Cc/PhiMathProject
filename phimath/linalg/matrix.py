@@ -1,3 +1,4 @@
+from matplotlib.pylab import angle
 from phimath.math.trigo import *
 from phimath.math.constants import *
 
@@ -93,12 +94,14 @@ class matrix:
         c = cos(angle)
         s = sin(angle)
         t = 1 - c
-
+                # Ensure axis is normalized for consistent rotation
+        axis = axis.normalize() 
         x, y, z = axis.x, axis.y, axis.z
+                # Standard Rodriguez Rotation Formula (Active / Right-Hand Rule)
         rotation_matrix = matrix([
-            [t*x*x + c,   t*x*y - s*z, t*x*z + s*y],
+            [t*x*x + c,   t*x*y - s*z, t*x*z + s*y], 
             [t*x*y + s*z, t*y*y + c,   t*y*z - s*x],
-            [t*x*z - s*y, t*y*z + s*x, t*z*z + c  ]
+            [-t*x*z + s*y, t*y*z + s*x, t*z*z + c ] # Note the sign changes here
         ])
         return rotation_matrix * self
 

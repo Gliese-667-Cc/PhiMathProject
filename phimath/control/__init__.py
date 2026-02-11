@@ -16,6 +16,7 @@ from .numeric import (
     has_converged,
     iteration_limit,
 )
+from .symbols import Symbol, symbols, Expression, VectorSymbol, VectorSymbolComponents
 
 __all__ = [
     "EPSILON",
@@ -26,4 +27,9 @@ __all__ = [
     "is_zero",
     "has_converged",
     "iteration_limit",
+    "Symbol",
+    "symbols",
+    "Expression",
+    "VectorSymbol",
+    "VectorSymbolComponents",
 ]
