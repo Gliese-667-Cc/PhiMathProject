@@ -36,7 +36,7 @@ pip install -i [https://test.pypi.org/simple/](https://test.pypi.org/simple/) ph
 **From Source:**
 
 ```bash
-git clone [https://github.com/YourUsername/PhiMathProject.git](https://github.com/YourUsername/PhiMathProject.git)
+git clone [https://github.com/Gliese-667-Cc/PhiMathProject.git](https://github.com/Gliese-667-Cc/PhiMathProject.git)
 cd PhiMathProject
 pip install .
 

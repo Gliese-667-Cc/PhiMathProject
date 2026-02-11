@@ -1,4 +1,3 @@
-from matplotlib.pylab import angle
 from phimath.math.trigo import *
 from phimath.math.constants import *
 
