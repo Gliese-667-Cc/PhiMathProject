@@ -1,6 +1,6 @@
 from phimath.math.func import make_function
 
-def rk2(f: function, x0: float, y0: float, h: float, n: int)-> function:
+def rk2(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
     """
     Second-order Runge-Kutta method (Heun's method) for solving ODEs.
 
@@ -30,7 +30,7 @@ def rk2(f: function, x0: float, y0: float, h: float, n: int)-> function:
         yi.append(y)
     return make_function(xi,yi)
 
-def rk4(f: function, x0: float, y0: float, h: float, n: int)-> function:
+def rk4(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
     """
     Fourth-order Runge-Kutta method for solving ODEs.
 
@@ -62,7 +62,7 @@ def rk4(f: function, x0: float, y0: float, h: float, n: int)-> function:
         yi.append(y)
     return make_function(xi,yi)
 
-def rkf45(f: function, x0: float, y0: float, h: float, n: int)-> function:
+def rkf45(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
     """
     Runge-Kutta-Fehlberg method (RKF45) for solving ODEs with adaptive step size.
 
@@ -107,7 +107,7 @@ def rkf45(f: function, x0: float, y0: float, h: float, n: int)-> function:
             h *= 0.5  # Decrease step size
         
     return make_function(xi,yi)
-def euler(f: function, x0: float, y0: float, h: float, n: int)-> function:
+def euler(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
     """
     Euler's method for solving ODEs.
 
@@ -135,7 +135,7 @@ def euler(f: function, x0: float, y0: float, h: float, n: int)-> function:
         yi.append(y)
     return make_function(xi,yi)
 
-def ode_solver(f: function, x0: float, y0: float, h: float, n: int, method: str='rk4')-> function:
+def ode_solver(f: callable, x0: float, y0: float, h: float, n: int, method: str='rk4')-> callable:
     """
     General ODE solver that selects the method based on the input string.
 

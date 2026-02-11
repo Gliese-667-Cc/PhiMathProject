@@ -1,0 +1,42 @@
+# --- Python Bytecode & Cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.python-version
+
+# --- Environments & Dependencies ---
+# (If you create a virtual environment later)
+venv/
+.venv/
+env/
+build/
+dist/
+*.egg-info/
+
+# --- IDE & Editor Settings ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- PhiMath Specific & OS Junk ---
+# Windows thumbnail cache
+Thumbs.db
+desktop.ini
+
+# Mac junk
+.DS_Store
+
+# --- Performance & Trace Logs ---
+# Since you're using tracemalloc and psutil, ignore the raw log files
+*.log
+.memtrace
+.coverage
+htmlcov/
+
+# --- User Data / Local Tests ---
+# Ignore any temporary ZIP files you create for sharing
+*.zip
+temp/
+test_results/

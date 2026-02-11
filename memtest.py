@@ -1,3 +1,9 @@
+import tracemalloc
+
+tracemalloc.start()
+
+# --- Your PhiMath Code Here ---
+import phimath as pm
 import phimath as pm
 
 E = pm.E
@@ -31,3 +37,8 @@ print(pm.solve_linear_system(e,f,g,h))                      # Solve linear equat
 print(pm.quadratic_solver(1,-3,2))                      # Solve quadratic equations
 print(pm.quadratic_solver(1,2,5))                       # Solve quadratic equations with complex roots
 print(equations.solve(re))
+# ------------------------------
+
+current, peak = tracemalloc.get_traced_memory()
+print(f"Current: {current / 10**6:.2f} MB; Peak: {peak / 10**6:.2f} MB")
+tracemalloc.stop()

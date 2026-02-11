@@ -1,20 +1,20 @@
 from phimath.math.func import pow
 
-def reimann_sum(f: function, a: float, b: float, dx=1e-4)-> float:
+def reimann_sum(f: callable, a: float, b: float, dx=1e-4)-> float:
     integral = 0.0
     n = int((b - a) / dx)
     for i in range(n):
         integral += f(a + i * dx) * dx
     return integral
 
-def trapezoidal_rule(f: function, a: float, b: float, dx=1e-4)-> float:
+def trapezoidal_rule(f: callable, a: float, b: float, dx=1e-4)-> float:
     n = int((b - a) / dx)
     integral = 0.5 * (f(a) + f(b))
     for i in range(1, n):
         integral += f(a + i * dx)
     return integral * dx
 
-def simpsons_rule(f: function, a: float, b: float, dx=1e-4)-> float:
+def simpsons_rule(f: callable, a: float, b: float, dx=1e-4)-> float:
     n = int((b - a) / dx)
     if n % 2 == 1:
         n += 1  # n must be even
@@ -25,7 +25,7 @@ def simpsons_rule(f: function, a: float, b: float, dx=1e-4)-> float:
         integral += 2 * f(a + i * dx)
     return integral * dx / 3
 
-def boole_rule(f: function, a: float, b: float, dx=1e-4)-> float:
+def boole_rule(f: callable, a: float, b: float, dx=1e-4)-> float:
     n = int((b - a) / dx)
     if n % 4 != 0:
         n += 4 - (n % 4)  # n must be multiple of 4
@@ -39,7 +39,7 @@ def boole_rule(f: function, a: float, b: float, dx=1e-4)-> float:
         integral += (2 * dx / 45) * (7 * f(x0) + 32 * f(x1) + 12 * f(x2) + 32 * f(x3) + 7 * f(x4))
     return integral
 
-def romberg_integration(f: function, a: float, b: float, max_order=5):
+def romberg_integration(f: callable, a: float, b: float, max_order=5):
     R = [[0] * (max_order + 1) for _ in range(max_order + 1)]
     for k in range(max_order + 1):
         n = pow(2, k)
@@ -49,7 +49,7 @@ def romberg_integration(f: function, a: float, b: float, max_order=5):
     return R[max_order][max_order]
 
 
-def integrate(f: function, a: float, b: float, method='simpson', dx=1e-4)-> float:
+def integrate(f: callable, a: float, b: float, method='simpson', dx=1e-4)-> float:
     """
     Numerically integrates the function f from a to b using specified method.
     f: function to integrate

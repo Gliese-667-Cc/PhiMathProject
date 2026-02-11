@@ -1,7 +1,11 @@
 from phimath.math.trigo import *
 from phimath.math.constants import *
 
+
 class matrix:
+
+    __slots__ = ['data', '_rows', '_cols']
+
     def __init__(self, data):
         self.data = data
 
@@ -102,6 +106,18 @@ class matrix:
         rows = [str(row) for row in self.data]
         return "\n".join(rows)
     
+    def solve(self, b):
+        from phimath.linalg.solvers import gaussian_eleminator
+    # 1. If 'b' is a list [1, 2, 3], turn it into a Column Matrix [[1], [2], [3]]
+        if isinstance(b, list):
+            b = matrix([[val] for val in b])
+
+        # 2. If 'b' is your custom Vector object, extract its components into a Column Matrix
+        elif hasattr(b, 'x'): # Checking if it's a Vector(x, y, z)
+            b = matrix([[b.x], [b.y], [b.z]])
+
+        # Now gaussian_eleminator gets two Matrix objects: (N x N) and (N x 1)
+        return gaussian_eleminator(self, b)
     
     def lu_decomposition(A):
         """
