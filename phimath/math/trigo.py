@@ -1,5 +1,6 @@
 import math
 from phimath.math.constants import DEG_TO_RAD
+from phimath.control.symbols import Expression
 
 def normalize_angle(x: float) -> float:
     """Reduce angle x to range [-pi, pi] using precise math.fmod"""
@@ -10,6 +11,9 @@ def normalize_angle(x: float) -> float:
 # -------------------------------------------------
 
 def sin(x: float) -> float:
+    # Check if x is a Symbol or Expression by looking for calculus methods
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "sin", None)
     if x == 0:
         return 0.0
     if x == math.pi:
@@ -17,6 +21,8 @@ def sin(x: float) -> float:
     return math.sin(x)
 
 def cos(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "cos", None)
     if x == math.pi / 2:
         return 0.0
     if x == 3 * math.pi / 2:
@@ -24,23 +30,31 @@ def cos(x: float) -> float:
     return math.cos(x)
 
 def tan(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "tan", None)
     if x == math.pi / 2 or x == 3 * math.pi / 2:
         raise ValueError("tan(x) is undefined for x = (2n+1)*pi/2")
     return math.tan(x)
 
 def sec(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "sec", None)
     cos_x = cos(x)
     if cos_x == 0:
         raise ValueError("sec(x) is undefined for x = (2n+1)*pi/2")
     return 1 / cos_x
 
 def csc(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "csc", None)
     sin_x = sin(x)
     if sin_x == 0:
         raise ValueError("csc(x) is undefined for x = n*pi")
     return 1 / sin_x
 
 def cot(x: float) -> float: 
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "cot", None)
     tan_x = tan(x)
     if tan_x == 0:
         raise ValueError("cot(x) is undefined for x = n*pi")
@@ -102,12 +116,18 @@ def coth(x: float) -> float:
 # -------------------------------------------------
 
 def asin(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "asin", None)
     return math.asin(x)
 
 def acos(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "acos", None)
     return math.acos(x)
 
 def atan(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "atan", None)
     return math.atan(x)
 
 def atan2(y: float, x: float) -> float:

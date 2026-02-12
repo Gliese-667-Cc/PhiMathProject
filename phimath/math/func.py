@@ -1,16 +1,27 @@
 import math
-from phimath.control.numeric import *
+from phimath.control.symbols import Expression
 
 def sqrt(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "sqrt", None)
     if x < 0:
         return x**0.5  # Handle negative inputs by returning complex result
     return math.sqrt(x)
 
 def cbrt(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "cbrt", None)
     return math.cbrt(x)
 
 def pow(x: float, n: int) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "**", n)
     return math.pow(x, n)
+
+def abs(x: float) -> float:
+    if hasattr(x, 'derive') or hasattr(x, 'evaluate'):
+        return Expression(x, "abs", None)
+    return math.fabs(x)
 
 def make_function(xi: list[float], yi: list[float]):
     """

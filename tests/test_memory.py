@@ -1,10 +1,12 @@
+import os
+import sys
 import tracemalloc
 
-tracemalloc.start()
 
-# --- Your PhiMath Code Here ---
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import phimath as pm
-import phimath as pm
+
+tracemalloc.start()
 
 E = pm.E
 PI = pm.PI
