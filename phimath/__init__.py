@@ -9,6 +9,8 @@ from phimath.calculas.differentiate import differentiate, fdifferentiate, bdiffe
 from phimath.calculas.integrate import integrate, reimann_sum, simpsons_rule, trapezoidal_rule, boole_rule, romberg_integration
 from phimath.calculas.ode_solvers import ode_solver, rk2, rk4, rkf45, euler
 from phimath.control.symbols import symbols, Symbol, Expression, VectorSymbol, VectorSymbolComponents
+from phimath.physics.constants import G, C, H_BAR, K_B, Q_E, EPSILON_0, MU_0, G_EARTH, AU, M_E, M_P, M_SOLAR
+from phimath.physics.mechanics import Particle, RigidBody, Force, SpringForce, System
 __all__ = [
     #contants
     "E","PI","TWO_PI","HALF_PI","DEG_TO_RAD","RAD_TO_DEG",
@@ -32,4 +34,8 @@ __all__ = [
     "integrate", "reimann_sum", "simpsons_rule", "trapezoidal_rule", "boole_rule", "romberg_integration",
     #ODE solvers
     "ode_solver", "rk2", "rk4", "rkf45", "euler",
+    #physical constants
+    "G", "C", "H_BAR", "K_B", "Q_E", "EPSILON_0", "MU_0", "G_EARTH", "AU", "M_E", "M_P", "M_SOLAR",
+    #mechanics
+    "Particle", "RigidBody", "Force", "SpringForce", "System",
     ]

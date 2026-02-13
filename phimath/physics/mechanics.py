@@ -1,136 +1,168 @@
 from phimath.linalg.vectors import vector
-from phimath.math import *
-from phimath.physics.constants import G
+from phimath.physics.constants import G, G_EARTH
 
 class Particle:
-    def __init__(self, mass, position=None, velocity=None):
-        """
-        Represents a physical point mass.
-        mass: mass in kg
-        position: vector(x, y, z)
-        velocity: vector(vx, vy, vz)
-        """
+    def __init__(self, mass, position=None, velocity=None, radius=0.5):
         self.mass = mass
         self.r = position if position else vector(0, 0, 0)
         self.v = velocity if velocity else vector(0, 0, 0)
         self.a = vector(0, 0, 0)
+        self.radius = radius
+
+    def kinetic_energy(self):
+        return 0.5 * self.mass * self.v.magnitude()**2
+    
+    def potential_energy(self, other):
+        r_vec = other.r - self.r
+        r_mag = r_vec.magnitude()
+        return -G * self.mass * other.mass / r_mag if r_mag > 0.01 else 0
 
     def __repr__(self):
         return f"Particle(m={self.mass}, r={self.r}, v={self.v})"
 
-def projectile_motion(v0, angle_deg, h0=0, g=9.81):
-    """
-    Calculates key metrics for a 2D projectile.
-    v0: initial velocity magnitude
-    angle_deg: launch angle in degrees
-    """    
-    theta = angle_deg * DEG_TO_RAD
-    vx = v0 * cos(theta)
-    vy = v0 * sin(theta)
-    
-    # Time of flight (to reach h=0)
-    # 0 = h0 + vy*t - 0.5*g*t^2 -> quadratic formula
-    from phimath.linalg.solvers import quadratic_solver
-    _, t_flight = quadratic_solver(-0.5 * g, vy, h0)
-    
-    range_x = vx * t_flight
-    max_height = h0 + (vy**2) / (2 * g)
-    
-    return {
-        "time_of_flight": t_flight,
-        "range": range_x,
-        "max_height": max_height
-    }
+class RigidBody(Particle):
+    def __init__(self, mass, position=None, velocity=None, radius=0.5, elasticity=1.0, is_static=False):
+        super().__init__(mass, position, velocity, radius)
+        self.elasticity = elasticity
+        self.is_static = is_static
 
-def net_force(*forces):
-    """Calculates the resultant vector of multiple force vectors."""
-    res = vector(0, 0, 0)
-    for f in forces:
-        res = res + f
-    return res
+    def apply_force(self, force_obj):
+        if self.is_static:
+            return
+        # Works with Force or SpringForce
+        if hasattr(force_obj, 'to_vector'):
+            self.a += force_obj.to_vector() / self.mass
 
-def friction_force(normal_force_vec, mu, velocity_vec, static=False):
-    """
-    Calculates friction force vector.
-    normal_force_vec: Normal force vector (points away from surface)
-    mu: Coefficient of friction (static or kinetic)
-    velocity_vec: Velocity of the object
-    """
-    f_mag = normal_force_vec.magnitude() * mu
-    
-    if velocity_vec.magnitude() == 0:
-        # Static friction acts to oppose potential motion
-        return f_mag # Magnitude only if direction is not specified
+    def collide(self, other):
+        relative_pos = self.r - other.r
+        distance = relative_pos.magnitude()
+        min_dist = self.radius + other.radius
+
+        if 0 < distance < min_dist:
+            # Velocity update
+            v1_final = (self.v * (self.mass - other.mass) + 2 * other.mass * other.v) / (self.mass + other.mass)
+            v2_final = (other.v * (other.mass - self.mass) + 2 * self.mass * self.v) / (self.mass + other.mass)
+            
+            combined_e = (self.elasticity + getattr(other, 'elasticity', 1.0)) / 2
+            self.v = v1_final * combined_e
+            other.v = v2_final * combined_e
+
+            # Position Correction
+            overlap = min_dist - distance
+            correction = relative_pos.normalize() * (overlap / 2)
+            self.r += correction
+            other.r -= correction
+
+class Force:
+    def __init__(self, magnitude, direction):
+        self.magnitude = magnitude
+        self.direction = direction.normalize()
+
+    def to_vector(self):
+        return self.magnitude * self.direction
+
+class SpringForce:
+    def __init__(self, k, rest_length, particle1, particle2, damping=0.0):
+        """
+        k: spring constant
+        rest_length: equilibrium length
+        p1, p2: connected particles
+        damping: coefficient of friction (default 0)
+        """
+        self.k = k
+        self.rest_length = rest_length
+        self.p1 = particle1
+        self.p2 = particle2
+        self.damping = damping
+
+    def apply(self):
+        """Calculates tension and damping, then applies it."""
+        r_vec = self.p2.r - self.p1.r
+        r_mag = r_vec.magnitude()
         
-    # Kinetic friction acts opposite to velocity
-    return velocity_vec.normalize() * (-f_mag)
-
-def tension_1d(m1, m2, F_applied):
-    """Standard calculation for tension between two masses on a string."""
-    a = F_applied / (m1 + m2)
-    T = m1 * a # Tension pulling m1
-    return a, T
-
-def law_of_gravitation(m1, m2, r_vec):
-    """
-    Newton's Law of Universal Gravitation.
-    r_vec: Vector from m1 to m2.
-    """
-    dist = r_vec.magnitude()
-    if dist == 0:
-        raise ValueError("Distance cannot be zero.")
+        if r_mag > 0:
+            # 1. Spring Force (Hooke's Law)
+            unit_vector = r_vec.normalize()
+            extension = r_mag - self.rest_length
+            spring_f_mag = self.k * extension
+            
+            # 2. Damping Force
+            # We only damp the velocity along the spring's axis
+            relative_v = self.p2.v - self.p1.v
+            # Dot product gives the scalar projection of velocity onto the spring vector
+            v_along_spring = relative_v.dot(unit_vector) 
+            damping_f_mag = self.damping * v_along_spring
+            
+            # Total Force Vector
+            total_f_vec = unit_vector * (spring_f_mag + damping_f_mag)
+            
+            # Apply to particles (Equal and Opposite)
+            self.p1.a += total_f_vec / self.p1.mass
+            self.p2.a -= total_f_vec / self.p2.mass
     
-    force_mag = (G * m1 * m2) / (dist**2)
-    # Force on m1 by m2 points toward m2 (along r_vec)
-    return r_vec.normalize() * force_mag
+    def e_potential_energy(self):
+        r_mag = (self.p2.r - self.p1.r).magnitude()
+        return 0.5 * self.k * ((r_mag - self.rest_length)**2)
 
-def orbital_velocity(M_central, r):
-    """Calculates circular orbital velocity."""
-    return sqrt(G * M_central / r)
+    def __repr__(self):
+        return f"SpringForce(k={self.k}, L0={self.rest_length}, c={self.damping})"
+    
+class System:
+    def __init__(self, particles, springs=None):
+        self.particles = particles
+        self.springs = springs if springs else []
 
-def escape_velocity(M_central, r):
-    """Calculates velocity needed to escape a central mass."""
-    return sqrt(2 * G * M_central / r)
+    def compute_gravitational_forces(self):
+        for i in range(len(self.particles)):
+            for j in range(i + 1, len(self.particles)):
+                p1, p2 = self.particles[i], self.particles[j]
+                r_vec = p2.r - p1.r
+                r_mag = r_vec.magnitude()
+                if r_mag > 0.1: # Softening to prevent explosions
+                    f_mag = G * p1.mass * p2.mass / r_mag**2
+                    f_vec = r_vec.normalize() * f_mag
+                    if not getattr(p1, 'is_static', False): p1.a += f_vec / p1.mass
+                    if not getattr(p2, 'is_static', False): p2.a -= f_vec / p2.mass
 
-def momentum(mass, velocity_vec):
-    return velocity_vec * mass
+    def resolve_collisions(self):
+        for i in range(len(self.particles)):
+            for j in range(i + 1, len(self.particles)):
+                if isinstance(self.particles[i], RigidBody) and isinstance(self.particles[j], RigidBody):
+                    self.particles[i].collide(self.particles[j])
 
-def kinetic_energy(mass, velocity_vec):
-    return 0.5 * mass * (velocity_vec.magnitude()**2)
+    def get_total_energy(self):
+        ke = sum(p.kinetic_energy() for p in self.particles)
+        # Summing GP and EP
+        gp = 0
+        for i in range(len(self.particles)):
+            for j in range(i + 1, len(self.particles)):
+                gp += self.particles[i].potential_energy(self.particles[j])
+        ep = sum(s.e_potential_energy() for s in self.springs)
+        return ke + gp + ep
 
-def elastic_collision_1d(m1, m2, v1, v2):
-    """
-    Calculates final velocities for a 1D elastic collision.
-    Derived from conservation of momentum and KE.
-    """
-    v1_f = ((m1 - m2) * v1 + 2 * m2 * v2) / (m1 + m2)
-    v2_f = ((m2 - m1) * v2 + 2 * m1 * v1) / (m1 + m2)
-    return v1_f, v2_f
+    def apply_uniform_gravity(self, g_vector=vector(0, -G_EARTH, 0)):
+        for p in self.particles:
+            if not getattr(p, 'is_static', False):
+                # F = m * g
+                p.a += g_vector
 
-def work_done(force_vec, displacement_vec):
-    """W = F . d"""
-    return force_vec.dot(displacement_vec)
-
-def power(force_vec, velocity_vec):
-    """P = F . v"""
-    return force_vec.dot(velocity_vec)
-
-def torque(force_vec, lever_arm_vec):
-    """Torque = r x F"""
-    return lever_arm_vec.cross(force_vec)
-
-def potential_energy(mass, height, g=9.81):
-    """PE = mgh"""
-    return mass * g * height
-
-def force(mass, acceleration_vec):
-    """F = ma"""
-    return acceleration_vec * mass 
-
-def angular_momentum(mass, velocity_vec, position_vec):
-    """L = r x (mv)"""
-    return position_vec.cross(velocity_vec * mass)
-
-def spring_force(k, displacement_vec):
-    """Hooke's Law: F = -kx"""
-    return displacement_vec * (-k)
+    def update(self, dt, sub_steps=4, gravity=vector(0, -G_EARTH, 0)):
+        sub_dt = dt / sub_steps
+        for _ in range(sub_steps):
+        # 1. Reset
+            for p in self.particles: p.a = vector(0, 0, 0)
+        
+        # 2. Apply Global Gravity (Moved inside the loop)
+            if gravity:
+                self.apply_uniform_gravity(gravity)
+            
+        # 3. Apply Internal Forces
+            self.compute_gravitational_forces()
+            for s in self.springs: s.apply()
+        
+        # 4. Resolve and Integrate
+            self.resolve_collisions()
+            for p in self.particles:
+                if not getattr(p, "is_static", False):
+                    p.v += p.a * sub_dt
+                    p.r += p.v * sub_dt

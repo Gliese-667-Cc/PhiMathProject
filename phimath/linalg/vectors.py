@@ -42,6 +42,12 @@ class vector:
     def __mul__(self,scalar):
         return vector(self.x * scalar, self.y * scalar, self.z * scalar)
     
+    def __rmul__(self,scalar):
+        return self.__mul__(scalar)
+    
+    def __truediv__(self,scalar):
+        return vector(self.x / scalar, self.y / scalar, self.z / scalar)
+    
     def dot(self,other):
         return self.x * other.x + self.y * other.y + self.z * other.z
 
