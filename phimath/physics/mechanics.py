@@ -1,4 +1,6 @@
+from phimath.calculas import differentiate
 from phimath.linalg.vectors import vector
+from .vectorops import VectorOps
 from phimath.physics.constants import G, G_EARTH
 
 class Particle:
@@ -166,3 +168,77 @@ class System:
                 if not getattr(p, "is_static", False):
                     p.v += p.a * sub_dt
                     p.r += p.v * sub_dt
+
+class Newtonian(System):
+    def __init__(self, particles, springs=None):
+        super().__init__(particles, springs)
+
+    def solve(self,duration,  dt, sub_steps=1000, gravity=None):
+        steps = int(duration / dt)
+        for _ in range(steps):
+            self.update(dt, sub_steps=sub_steps, gravity=gravity)
+
+    def get_positions(self):
+        return [p.r for p in self.particles]
+    
+from array import array
+from phimath.calculas.differentiate import differentiate
+from phimath.calculas.ode_solvers import rk4
+
+class Lagrangian:
+    """
+    Analytical engine to solve Euler-Lagrange equations for system positions.
+    """
+    def __init__(self, system, potential_func):
+        self.system = system
+        self.potential_func = potential_func
+
+    def _get_L(self, positions, velocities):
+        """
+        Computes L = T - V for arbitrary state vectors.
+        Used for numerical differentiation.
+        """
+        # Kinetic Energy T = 1/2 m v^2
+        ke = 0.0
+        for i in range(self.system.n):
+            v_sq = sum(velocities[i*3 + j]**2 for j in range(3))
+            ke += 0.5 * self.system.mass[i] * v_sq
+            
+        # Potential Energy V from user-defined function
+        # Temporarily update system state to use potential_func
+        original_pos = self.system.pos
+        self.system.pos = array('d', positions)
+        pe = self.potential_func(self.system)
+        self.system.pos = original_pos
+        
+        return ke - pe
+
+    def solve_step(self, dt):
+        """
+        Solves the Euler-Lagrange equations to find accelerations 
+        and updates the system's position.
+        """
+        n_params = self.system.n * 3
+        accelerations = [0.0] * n_params
+        
+        # Numerical approximation of d/dt(dL/dv) - dL/dq = 0
+        # For simple Cartesian systems, this reduces to finding 
+        # the gradient of the potential field.
+        h = 1e-5
+        for i in range(n_params):
+            # Partial L / Partial q
+            def L_q(val):
+                p = list(self.system.pos)
+                p[i] = val
+                return self._get_L(p, self.system.vel)
+            
+            dL_dq = differentiate(L_q, self.system.pos[i], h)
+            
+            # For most classical mechanics: accel = (dL/dq) / mass
+            mass_idx = i // 3
+            self.system.acc[i] = dL_dq / self.system.mass[mass_idx]
+
+        # Integrate to update velocity and position
+        for i in range(n_params):
+            self.system.vel[i] += self.system.acc[i] * dt
+            self.system.pos[i] += self.system.vel[i] * dt

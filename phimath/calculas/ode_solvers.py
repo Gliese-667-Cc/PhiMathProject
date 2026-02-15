@@ -1,3 +1,4 @@
+from array import array
 from phimath.math.func import make_function
 
 def rk2(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
@@ -19,15 +20,15 @@ def rk2(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
         list of values      
     """
     x, y = x0, y0
-    xi=[]
-    yi=[]
-    for _ in range(n):
+    xi=array('d',[0.0]*n)
+    yi=array('d',[0.0]*n)
+    for i in range(n):
         k1 = f(x, y)
         k2 = f(x + h, y + h * k1)
         y += (h / 2) * (k1 + k2)
         x += h
-        xi.append(x)
-        yi.append(y)
+        xi[i] = x
+        yi[i] = y
     return make_function(xi,yi)
 
 def rk4(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
@@ -49,17 +50,17 @@ def rk4(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
         returns the function f.       
     """
     x, y = x0, y0
-    xi=[]
-    yi=[]
-    for _ in range(n):
+    xi=array('d',[0.0]*n)
+    yi=array('d',[0.0]*n)
+    for i in range(n):
         k1 = f(x, y)
         k2 = f(x + h / 2, y + (h / 2) * k1)
         k3 = f(x + h / 2, y + (h / 2) * k2)
         k4 = f(x + h, y + h * k3)
         y += (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
         x += h
-        xi.append(x)
-        yi.append(y)
+        xi[i] = x
+        yi[i] = y
     return make_function(xi,yi)
 
 def rkf45(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
@@ -81,9 +82,9 @@ def rkf45(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
         returns the function f.        
     """
     x, y = x0, y0
-    xi=[]
-    yi=[]
-    for _ in range(n):
+    xi=array('d',[0.0]*n)
+    yi=array('d',[0.0]*n)
+    for i in range(n):
         k1 = h * f(x, y)
         k2 = h * f(x + h / 4, y + k1 / 4)
         k3 = h * f(x + 3 * h / 8, y + 3 * k1 / 32 + 9 * k2 / 32)
@@ -101,8 +102,8 @@ def rkf45(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
             x += h
             y = y5th
             h *= 1.5  # Increase step size
-            xi.append(x)
-            yi.append(y)
+            xi[i] = x
+            yi[i] = y
         else:
             h *= 0.5  # Decrease step size
         
@@ -126,13 +127,13 @@ def euler(f: callable, x0: float, y0: float, h: float, n: int)-> callable:
         returns the function f.
     """
     x, y = x0, y0
-    xi=[]
-    yi=[]
-    for _ in range(n):
+    xi=array('d',[0.0]*n)
+    yi=array('d',[0.0]*n)
+    for i in range(n):
         y += h * f(x, y)
         x += h
-        xi.append(x)
-        yi.append(y)
+        xi[i] = x
+        yi[i] = y
     return make_function(xi,yi)
 
 def ode_solver(f: callable, x0: float, y0: float, h: float, n: int, method: str='rk4')-> callable:

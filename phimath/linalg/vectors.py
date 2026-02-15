@@ -1,72 +1,89 @@
-from phimath.math.trigo import *
-from phimath.math.constants import *
+from array import array
+from phimath.math.trigo import sin, cos
+from phimath.math.constants import DEG_TO_RAD
 from phimath.control.symbols import *
 
 class vector:
-   
     def __new__(cls, x=None, y=None, z=None, mode=None):
-        # Check if input is a string (e.g., vector("E")) or contains Symbols
         is_symbolic = isinstance(x, str) or \
                       (hasattr(x, 'name') and hasattr(x, 'is_function')) or \
                       (isinstance(x, (list, tuple)) and any(hasattr(i, 'name') for i in x if i is not None))
 
         if is_symbolic:
-            # Lazy Import to avoid Circular Dependency errors
             from phimath.control.symbols import VectorSymbol
-            # Delegate to the Symbolic backend
             return VectorSymbol(x)
         
-        # Otherwise, create a standard efficient Numerical vector
         return super(vector, cls).__new__(cls)
     
-    def __init__ (self,x=None,y=None,z=None,mode=None):
-        self.mode = mode.lower() if mode else None
-        if self.mode == 'polar' or self.mode == 'spherical':
-            if z is None:
-                z=0.0
-            if x is not None and y is not None:
-                self.x = x * cos(DEG_TO_RAD*z) * cos(DEG_TO_RAD*y) 
-                self.y = x * sin(DEG_TO_RAD*y) * cos(DEG_TO_RAD*z)
-                self.z = x * sin(DEG_TO_RAD*z)
+    def __init__(self, x=None, y=None, z=None, mode=None):
+        # 'd' denotes double-precision floats (8 bytes) for high-precision mechanics
+        self.data = array('d', [0.0, 0.0, 0.0])
+        
+        mode = mode.lower() if mode else None
+        if mode == 'polar' or mode == 'spherical':
+            r_val = float(x) if x is not None else 0.0
+            theta = float(y) if y is not None else 0.0
+            phi = float(z) if z is not None else 0.0
+            
+            self.data[0] = r_val * cos(DEG_TO_RAD * phi) * cos(DEG_TO_RAD * theta)
+            self.data[1] = r_val * sin(DEG_TO_RAD * theta) * cos(DEG_TO_RAD * phi)
+            self.data[2] = r_val * sin(DEG_TO_RAD * phi)
         else:
-            self.x = x if x is not None else 0.0
-            self.y = y if y is not None else 0.0
-            self.z = z if z is not None else 0.0
+            self.data[0] = float(x) if x is not None else 0.0
+            self.data[1] = float(y) if y is not None else 0.0
+            self.data[2] = float(z) if z is not None else 0.0
 
-    def __add__(self,other):
-        return vector(self.x + other.x, self.y + other.y, self.z + other.z)
+    # Properties to maintain existing p.r.x syntax while using array storage
+    @property
+    def x(self): return self.data[0]
+    @x.setter
+    def x(self, value): self.data[0] = float(value)
 
-    def __sub__(self,other):
-        return vector(self.x - other.x, self.y - other.y, self.z - other.z)
+    @property
+    def y(self): return self.data[1]
+    @y.setter
+    def y(self, value): self.data[1] = float(value)
 
-    def __mul__(self,scalar):
-        return vector(self.x * scalar, self.y * scalar, self.z * scalar)
+    @property
+    def z(self): return self.data[2]
+    @z.setter
+    def z(self, value): self.data[2] = float(value)
+
+    def __add__(self, other):
+        return vector(self.data[0] + other.x, self.data[1] + other.y, self.data[2] + other.z)
+
+    def __sub__(self, other):
+        return vector(self.data[0] - other.x, self.data[1] - other.y, self.data[2] - other.z)
+
+    def __mul__(self, scalar):
+        return vector(self.data[0] * scalar, self.data[1] * scalar, self.data[2] * scalar)
     
-    def __rmul__(self,scalar):
+    def __rmul__(self, scalar):
         return self.__mul__(scalar)
     
-    def __truediv__(self,scalar):
-        return vector(self.x / scalar, self.y / scalar, self.z / scalar)
+    def __truediv__(self, scalar):
+        return vector(self.data[0] / scalar, self.data[1] / scalar, self.data[2] / scalar)
     
-    def dot(self,other):
-        return self.x * other.x + self.y * other.y + self.z * other.z
+    def dot(self, other):
+        return self.data[0] * other.x + self.data[1] * other.y + self.data[2] * other.z
 
-    def cross(self,other):
+    def cross(self, other):
         return vector(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x
+            self.data[1] * other.z - self.data[2] * other.y,
+            self.data[2] * other.x - self.data[0] * other.z,
+            self.data[0] * other.y - self.data[1] * other.x
         )
     
     def magnitude(self):
-        return (self.x**2 + self.y**2 + self.z**2)**0.5
+        # Local variable access is faster than repeated property calls
+        x, y, z = self.data
+        return (x**2 + y**2 + z**2)**0.5
     
     def normalize(self):
         mag = self.magnitude()
         if mag == 0:
             return vector(0.0, 0.0, 0.0)
-        return vector(self.x / mag, self.y / mag, self.z / mag)
+        return self.__truediv__(mag)
     
     def __repr__(self):
-        return f"vector({self.x}, {self.y}, {self.z})"
-    
+        return f"vector({self.data[0]}, {self.data[1]}, {self.data[2]})"

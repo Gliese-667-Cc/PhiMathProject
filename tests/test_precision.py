@@ -7,7 +7,7 @@ import phimath as pm
 
 def assert_close(val1, val2, tolerance=1e-10, name="Check"):
     diff = abs(val1 - val2)
-    status = "PASSED" if diff < tolerance else "FAILED"
+    status = "PASSED" if pm.is_close(val1, val2, tol=tolerance) else "FAILED"
     print(f"[{status}] {name}: |{val1} - {val2}| = {diff:.2e}")
     if status == "FAILED":
         return False

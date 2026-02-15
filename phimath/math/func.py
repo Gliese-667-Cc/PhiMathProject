@@ -1,3 +1,4 @@
+from array import array
 import math
 from phimath.control.symbols import Expression
 
@@ -23,15 +24,15 @@ def abs(x: float) -> float:
         return Expression(x, "abs", None)
     return math.fabs(x)
 
-def make_function(xi: list[float], yi: list[float]):
+def make_function(xi: array, yi: array) -> callable:
     """
     Create a function that interpolates the given data points (xi, yi)
     using Lagrange interpolation.
 
     Parameters:
-    xi : list of float
+    xi : array of float
         The x-coordinates of the data points.
-    yi : list of float
+    yi : array of float
         The y-coordinates of the data points.
 
     Returns:
