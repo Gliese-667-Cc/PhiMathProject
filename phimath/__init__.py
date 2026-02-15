@@ -41,5 +41,7 @@ __all__ = [
     #physical constants
     "G", "C", "H_BAR", "K_B", "Q_E", "EPSILON_0", "MU_0", "G_EARTH", "AU", "M_E", "M_P", "M_SOLAR",
     #mechanics
-    "Particle", "RigidBody", "Force", "SpringForce", "System",
+    "Particle", "RigidBody", "Force", "SpringForce", "System", "Newtonian", "Lagrangian",
+    #vector operations
+    "VectorOps", "VectorField",
     ]
