@@ -3,8 +3,8 @@ name: Publish to TestPyPI
 on:
   push:
     tags:
-      - 'v*' # Triggers on tags like v0.1.6
-  workflow_dispatch: # Allows manual triggering from the Actions tab
+      - 'v*' 
+  workflow_dispatch: 
 
 jobs:
   test:
@@ -31,7 +31,7 @@ jobs:
       name: testpypi
       url: https://test.pypi.org/p/phimath
     permissions:
-      id-token: write # Required for Trusted Publishing (OIDC)
+      id-token: write 
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
