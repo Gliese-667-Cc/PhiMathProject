@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=82.0"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -20,5 +20,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
-[tool.setuptools]
-packages = ["phimath*"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["phimath*"]
