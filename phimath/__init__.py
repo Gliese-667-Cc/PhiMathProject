@@ -5,6 +5,7 @@ from .math.exp_log import exp, ln, log
 from .math.func import sqrt, cbrt, pow, make_function
 from .linalg.vectors import vector
 from .linalg.matrix import matrix
+from .linalg.array import array, linspace, arange, zeros, ones, min, max, mean, std, var, median
 from .linalg.solvers import solve_linear_system, gaussian_eleminator, quadratic_solver
 from .calculas.differentiate import differentiate, fdifferentiate, bdifferentiate, second_derivative, nth_derivative
 from .calculas.integrate import integrate, reimann_sum, simpsons_rule, trapezoidal_rule, boole_rule, romberg_integration
@@ -31,7 +32,7 @@ __all__ = [
     #other math functions
     "sqrt","cbrt","pow", "make_function",
     #linear algebra
-    "vector","matrix", "solve_linear_system", "gaussian_eleminator", "quadratic_solver",
+    "vector","matrix", "solve_linear_system", "gaussian_eleminator", "quadratic_solver", "array", "linspace", "arange", "zeros", "ones", "min", "max", "mean", "std", "var", "median",
     #differentiation
     "differentiate", "fdifferentiate", "bdifferentiate", "second_derivative", "nth_derivative",
     #integration

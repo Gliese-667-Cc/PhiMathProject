@@ -1,7 +1,7 @@
 # PhiMath
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.1.9-green.svg)
+![Version](https://img.shields.io/badge/version-0.2.0-green.svg)
 ![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 
 **PhiMath** is a high‑precision, zero‑dependency numerical and symbolic
@@ -66,7 +66,7 @@ environments.
 
 ## Installation
 
-### From TestPyPI
+### From PyPI
 
 ``` bash
 pip install phimath
