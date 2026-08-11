@@ -24,7 +24,7 @@ class Expression:
         
         # Handle Power with special syntax
         if self.op in ["**", "^"]:
-            return f"({self.left} ^ {self.right})"
+            return f"({self.left} ** {self.right})"
         
         # Handle standard binary operators
         binary_ops = ["+", "-", "*", "/", "%", "//"]
@@ -118,50 +118,6 @@ class Expression:
 
         return Expression(self, "partial", var)
     
-    def aderive(self, var):
-        from phimath.math import sin, cos, tan, sec, exp, ln, asin, atan, sqrt
-
-        """Returns a new Expression representing the integral."""
-        u = self.left
-        v = self.right
-
-        def i(term, x):
-            return term.aderive(x) if hasattr(term, 'aderive') else (term * x)
-
-        def d(term, x):
-            return term.derive(x) if hasattr(term, 'derive') else 0
-
-        if self.op == "+": return i(u, var) + i(v, var)
-        if self.op == "-": return i(u, var) - i(v, var)
-
-        # Power Rule for Integration
-        if self.op in ["**", "^"]:
-            if u == var:
-                # Check for 1/x case (n = -1)
-                if v == -1: return ln(abs(u))
-                return pow(u, v + 1) / (v + 1)
-            if v == var:
-                # Fixed: integral of a^x is a^x / ln(a)
-                return pow(u, v) / ln(u)
-
-        # Simple substitution check: only integrate if the inner term is just 'var'
-        # This prevents the "+ i(u, var)" logic which was mathematically incorrect.
-        if u != var:
-            return Expression(self, "integral", var)
-
-        if self.op == "sin":  return -cos(u)
-        if self.op == "cos":  return sin(u)
-        if self.op == "tan":  return -ln(abs(cos(u)))
-        if self.op == "sec":  return ln(abs(sec(u) + tan(u)))
-        if self.op == "csc":  return ln(abs(tan(u / 2)))
-        if self.op == "cot":  return ln(abs(sin(u)))
-        if self.op == "exp":  return exp(u)
-        if self.op == "ln":   return (u * ln(u)) - u
-        if self.op == "asin": return (u * asin(u)) + sqrt(1 - (u ** 2))
-        if self.op == "atan": return (u * atan(u)) - (0.5 * ln(u ** 2 + 1))
-
-        return Expression(self, "integral", var)
-    
     def simplify(self):
         """Recursively simplifies the expression tree."""
         # 1. Simplify children first (Post-order traversal)
@@ -213,7 +169,7 @@ class Expression:
             """
         # 1. Convert the expression to a Python-readable string
         # We replace our symbolic names with 'math.func' equivalents
-        expr_str = str(self.simplify())
+        expr_str = str(self.simplify()).replace("^", "**")  # Ensure Python uses ** for power
 
         # 2. Define the function wrapper string
         # We include 'math' and 'pm' to handle all function calls

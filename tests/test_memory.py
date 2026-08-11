@@ -41,9 +41,13 @@ print(pm.quadratic_solver(1,2,5))                       # Solve quadratic equati
 print(equations.solve(re))
 A = pm.vector("A")
 B = pm.vector("B")
-print(A.dot(B))                                            # Symbolic dot product
-# ------------------------------
-
+print(A.dot(B))             
+x= pm.Symbol('x')
+expr = 3*x**2 + 2*x - 5
+expr.derive(x)    
+f = expr.to_numeric('x')
+X=pm.arange(0, 10, 0.1)
+print(f(X))
 current, peak = tracemalloc.get_traced_memory()
 print(f"Current: {current / 10**6:.2f} MB; Peak: {peak / 10**6:.2f} MB")
 tracemalloc.stop()

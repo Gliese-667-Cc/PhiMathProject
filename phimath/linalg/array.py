@@ -5,7 +5,19 @@ class array:
         self.data = data
 
     def __repr__(self):
-        return f"array({self.data})"
+        return f"({self.data})"
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def tolist(self):
+        return self.data.copy()
 
     def __add__(self, other):
         if isinstance(other, array):
@@ -46,44 +58,6 @@ class array:
     def __rtruediv__(self, other):
         return array([other / a for a in self.data])
     
-    def linspace(start, stop, num=50):
-        if num < 0:
-            raise ValueError("num must be non-negative")
-
-        if num == 0:
-            return array([])
-
-        if num == 1:
-            return array([start])
-
-        step = (stop - start) / (num - 1)
-
-        return array([
-            start + i * step
-            for i in range(num)
-        ])
-
-    def arange(start, stop=None, step=1):
-        if stop is None:
-            start, stop = 0, start
-
-        if step == 0:
-            raise ValueError("step must not be zero")
-
-        result = []
-        value = start
-
-        if step > 0:
-            while value < stop:
-                result.append(value)
-                value += step
-        else:
-            while value > stop:
-                result.append(value)
-                value += step
-
-        return array(result)
-
     def zeros(shape):
         if isinstance(shape, int):
             shape = (shape,)
@@ -134,3 +108,32 @@ class array:
         if not isinstance(arr, array):
             raise TypeError("Input must be an instance of array")
         return builtins.max(arr.data)
+
+def linspace(start, stop, num=50):
+    if num < 0:
+        raise ValueError("num must be non-negative")
+    if num == 0:
+        return array([])
+    if num == 1:
+        return array([start])
+    step = (stop - start) / (num - 1)
+    return array([
+        start + i * step
+        for i in range(num)
+    ])
+def arange(start, stop=None, step=1):
+    if stop is None:
+        start, stop = 0, start
+    if step == 0:
+        raise ValueError("step must not be zero")
+    result = []
+    value = start
+    if step > 0:
+        while value < stop:
+            result.append(value)
+            value += step
+    else:
+        while value > stop:
+            result.append(value)
+            value += step
+    return array(result)
