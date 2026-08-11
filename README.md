@@ -69,7 +69,7 @@ environments.
 ### From TestPyPI
 
 ``` bash
-pip install -i https://test.pypi.org/simple/ phimath
+pip install phimath
 ```
 
 ### From Source
